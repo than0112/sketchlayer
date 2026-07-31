@@ -1,0 +1,44 @@
+{
+  "name": "sketchlayer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "A lightweight React layer for AI-readable visual annotation.",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "canvas",
+    "annotation",
+    "drawing",
+    "ai"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "type": "module",
+  "packageManager": "npm@11.6.2",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "jsdom": "29.1.1",
+    "typescript": "6.0.3",
+    "vite": "8.2.0",
+    "vitest": "4.1.10"
+  }
+}
