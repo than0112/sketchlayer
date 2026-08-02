@@ -46,7 +46,7 @@
 - [x] 建立最小狀態頁，明示目前封存狀態。
 - [x] 建立 `.gitignore` 與開發說明。
 - [x] 採用 npm，提交 `package-lock.json` 以鎖定依賴。
-- [x] 採用工作套件名 `sketchlayer`、MIT 授權與 npm metadata；公開前仍需補 repository URL。
+- [x] 採用工作套件名 `sketchlayer`、MIT 授權、GitHub repository metadata 與 npm metadata。
 - [x] 建立 CI：typecheck、test、build。
 
 ## Gate 0 — 解封與問題驗證（產品實作前置）
@@ -110,7 +110,7 @@
 - [x] 建立 Basic、Image Annotation、Teaching、AI Feedback demos。
 - [x] 撰寫安裝、受控模式、匯出與無障礙文件。
 - [x] 加入單元、互動、匯出 snapshot 與 Chromium／Firefox／WebKit CI 測試。
-- [!] 版本、MIT、provenance 與 supply-chain checklist 已完成；2026-08-01 registry 查無 `sketchlayer`，但 repository URL 與 npm owner 登入仍須在真正發布前確認。
+- [!] 版本、MIT、repository metadata、provenance workflow 與 supply-chain checklist 已完成；npm owner 登入、2FA／Trusted Publisher 設定與首次發布仍須由帳號持有人完成（見 `docs/publishing.md`）。
 
 ## 明確不在 MVP
 

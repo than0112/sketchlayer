@@ -4,6 +4,14 @@
   "version": "0.2.0",
   "description": "A lightweight React layer for AI-readable visual annotation.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/than0112/sketchlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/than0112/sketchlayer/issues"
+  },
+  "homepage": "https://github.com/than0112/sketchlayer#readme",
   "keywords": [
     "react",
     "canvas",
@@ -32,8 +40,7 @@
   },
   "files": [
     "dist-lib",
-    "docs/api.md",
-    "docs/publishing.md",
+    "docs",
     "examples",
     "README.md",
     "LICENSE"
