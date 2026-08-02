@@ -18,7 +18,7 @@
 - [x] Add Problem Circle, Suggestion Arrow, and Preserve Marker AI shape presets.
 - [x] Add selection-only metadata editing and Annotation Inspector save/cancel behavior.
 - [x] Keep incomplete annotations visible while disabling agent export until target and note are complete.
-- [ ] Validate the full 0.2 flow with at least three target users before adding 0.3 features.
+- [ ] Validate the full 0.2 flow with at least three target users before adding 0.3 features (protocol: `docs/gate-0-validation.md`).
 
 ## Reference-alignment UI pass
 
@@ -28,8 +28,8 @@
 - [x] Verify Send to Agent interaction and responsive behavior at 390 × 844.
 - [x] Complete the side-by-side visual review in `design-qa.md` with `final result: passed`.
 
-更新日期：2026-08-01
-目前狀態：**已正式解除封存；Phase 2 MVP 完成。**
+更新日期：2026-08-02
+目前狀態：**Phase 4 Pro 0.2 實作完成；等待真實使用者驗證。**
 
 ## 使用規則
 
@@ -56,8 +56,8 @@
 - [ ] 訪談至少 3 位目標使用者，驗證「AI 生成介面 → 人工圈選／標記 → 結構化回饋給 agent」流程（保留為 discovery debt）。
 - [ ] 收集至少 1 份外部行為證據，而非只有口頭興趣（保留為 discovery debt）。
 - [-] 無產品程式碼 mock：因 owner 已授權直接實作 Phase 1，不再作為前置條件。
-- [ ] 定義 Phase 1 實測成功門檻：完成時間、回饋正確率、agent 可解析率、再次使用意願。
-- [ ] 重新比較 tldraw、Excalidraw、Fabric.js、perfect-freehand 的可嵌入性、授權、bundle size 與缺口。
+- [x] 定義 Phase 1 實測成功門檻：完成時間、回饋正確率、agent 可解析率、再次使用意願（見 `docs/gate-0-validation.md`）。
+- [x] 重新比較 tldraw、Excalidraw、Fabric.js、perfect-freehand 的可嵌入性、授權、bundle size 與缺口（2026-08-02，見 `docs/canvas-engine-evaluation.md`）。
 - [x] Go 決策已記錄於 ADR 001；此決策只解除 Phase 1，不自動解除 Phase 2/3。
 
 ## Phase 1 — 可驗證的最小核心（Gate 0 通過後）

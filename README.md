@@ -70,7 +70,7 @@ export function FeedbackLayer() {
 - Serialization helpers — versioned JSON creation, parsing, and serialization.
 - TypeScript types — annotation, brush, background, semantic color, and document contracts.
 
-See [API reference](./docs/api.md), [examples](./examples), and [publishing guide](./docs/publishing.md).
+See [API reference](./docs/api.md), [examples](./examples), [publishing guide](./docs/publishing.md), and the [validation protocol](./docs/gate-0-validation.md).
 
 ## Pro 0.2 (optional)
 
