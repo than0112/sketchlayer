@@ -3,8 +3,10 @@
 ## Demo and blank-board workflow
 
 - [x] Keep AI Dashboard Feedback as the initial annotated example.
-- [x] Add a document switcher that creates a clean, untitled board.
-- [x] Reset background image, annotations, history, and JSON for a blank board.
+- [x] Add a document switcher that creates and switches between clean boards.
+- [x] Save each board's name, annotations, background, and active selection in localStorage.
+- [x] Support renaming and deleting local boards while preserving the initial example.
+- [x] Reset background image, annotations, history, and JSON for every new blank board.
 - [x] Let users remove a background image independently from annotation erasing.
 
 ## Phase 4 — SketchLayer Pro 0.2

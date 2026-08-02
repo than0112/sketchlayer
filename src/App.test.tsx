@@ -1,7 +1,10 @@
+import { beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App", () => {
+  beforeEach(() => window.localStorage.clear());
+
   it("opens in a ready-to-draw accessible state", () => {
     render(<App />);
     expect(screen.getByRole("img", { name: "SketchLayer drawing canvas" })).toBeInTheDocument();
@@ -62,5 +65,19 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "Remove background image" }));
     expect(screen.getByRole("status")).toHaveTextContent("Background image removed");
     expect(screen.getAllByRole("article")).toHaveLength(5);
+  });
+
+  it("renames and deletes locally saved boards", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /AI Dashboard Feedback/ }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /New blank board/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Untitled board/ }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /Rename current board/ }));
+    fireEvent.change(screen.getByLabelText("Board name"), { target: { value: "Checkout review" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save board name" }));
+
+    expect(screen.getByRole("button", { name: /^Checkout review/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Delete Checkout review" }));
+    expect(screen.getByRole("button", { name: /AI Dashboard Feedback/ })).toBeInTheDocument();
   });
 });

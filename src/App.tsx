@@ -1,24 +1,32 @@
 import {
   CaretDown,
+  Check,
   CloudCheck,
   Export,
+  PencilSimple,
   Plus,
   ShareNetwork,
   ScribbleLoop,
+  Trash,
+  X,
 } from "@phosphor-icons/react";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { FloatingToolbar, type ToolbarPopover } from "./components/FloatingToolbar";
 import { JsonPreviewPanel } from "./components/JsonPreviewPanel";
 import { LeftToolRail } from "./components/LeftToolRail";
 import { SketchCanvas, type SketchCanvasHandle } from "./components/SketchCanvas";
-import { demoAnnotations, demoBackground, demoBackgroundImage } from "./lib/demo";
 import { createHistory, historyReducer } from "./lib/history";
-import { DEFAULT_BACKGROUND, downloadJson, serializeSketchDocument } from "./lib/serialization";
+import { downloadJson, serializeSketchDocument } from "./lib/serialization";
 import { gradientCss } from "./lib/templates";
+import {
+  createBlankDocument,
+  loadWorkspace,
+  saveWorkspace,
+  type WorkspaceDocument,
+} from "./lib/workspace";
 import type {
   BrushStyle,
   CanvasBackground,
-  CanvasImageMeta,
   DrawingTool,
   GradientPreset,
   SemanticColor,
@@ -45,27 +53,31 @@ const triggerBlobDownload = (blob: Blob, filename: string) => {
 };
 
 export default function App() {
-  const [history, dispatch] = useReducer(historyReducer, demoAnnotations, createHistory);
+  const [savedWorkspace, setSavedWorkspace] = useState(() => loadWorkspace(window.localStorage));
+  const initialDocumentRef = useRef(
+    savedWorkspace.documents.find(({ id }) => id === savedWorkspace.activeDocumentId) ?? savedWorkspace.documents[0],
+  );
+  const [history, dispatch] = useReducer(historyReducer, initialDocumentRef.current.annotations, createHistory);
   const [tool, setTool] = useState<DrawingTool>("pen");
   const [brush, setBrush] = useState(defaultBrush);
-  const [background, setBackground] = useState<CanvasBackground>(demoBackground);
-  const [backgroundImage, setBackgroundImage] = useState<{ url: string; meta: CanvasImageMeta } | null>(demoBackgroundImage);
-  const [backgroundImageFit, setBackgroundImageFit] = useState<"contain" | "cover">("cover");
+  const [background, setBackground] = useState<CanvasBackground>(initialDocumentRef.current.background);
+  const [backgroundImage, setBackgroundImage] = useState(initialDocumentRef.current.backgroundImage
+    ? { url: initialDocumentRef.current.backgroundImage.url, meta: initialDocumentRef.current.backgroundImage.meta }
+    : null);
+  const [backgroundImageFit, setBackgroundImageFit] = useState<"contain" | "cover">(
+    initialDocumentRef.current.backgroundImage?.fit ?? "contain",
+  );
   const [imageError, setImageError] = useState(false);
   const [openPopover, setOpenPopover] = useState<ToolbarPopover>(null);
   const [documentMenuOpen, setDocumentMenuOpen] = useState(false);
-  const [documentKind, setDocumentKind] = useState<"example" | "blank">("example");
+  const [renameDraft, setRenameDraft] = useState<string | null>(null);
+  const [isLocallySaved, setIsLocallySaved] = useState(true);
   const [status, setStatus] = useState("Pen ready");
   const [toast, setToast] = useState<string | null>(null);
   const canvasRef = useRef<SketchCanvasHandle>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const objectUrlRef = useRef<string | null>(null);
-
-  const releaseUploadedBackground = useCallback(() => {
-    if (!objectUrlRef.current) return;
-    URL.revokeObjectURL(objectUrlRef.current);
-    objectUrlRef.current = null;
-  }, []);
+  const activeDocument = savedWorkspace.documents.find(({ id }) => id === savedWorkspace.activeDocumentId)
+    ?? savedWorkspace.documents[0];
 
   const exportOptions = useMemo(
     () => ({ background, ...(backgroundImage ? { backgroundImage: backgroundImage.meta } : {}) }),
@@ -76,12 +88,30 @@ export default function App() {
     [exportOptions, history.present],
   );
 
-  useEffect(
-    () => () => {
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-    },
-    [],
-  );
+  useEffect(() => {
+    setSavedWorkspace((current) => ({
+      ...current,
+      documents: current.documents.map((document) => document.id === current.activeDocumentId
+        ? {
+            ...document,
+            annotations: history.present,
+            background,
+            backgroundImage: backgroundImage
+              ? { ...backgroundImage, fit: backgroundImageFit }
+              : null,
+            updatedAt: new Date().toISOString(),
+          }
+        : document),
+    }));
+    setIsLocallySaved(false);
+  }, [background, backgroundImage, backgroundImageFit, history.present]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIsLocallySaved(saveWorkspace(window.localStorage, savedWorkspace));
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [savedWorkspace]);
 
   useEffect(() => {
     if (!toast) return;
@@ -173,17 +203,27 @@ export default function App() {
 
   const chooseBackgroundImage = (file: File | undefined) => {
     if (!file) return;
-    releaseUploadedBackground();
-    const url = URL.createObjectURL(file);
-    objectUrlRef.current = url;
-    setImageError(false);
-    setBackgroundImage({ url, meta: { name: file.name, includedInPng: true } });
-    setBackgroundImageFit("contain");
-    setStatus("Loading background image");
+    if (file.size > 3_000_000) {
+      setToast("Choose an image smaller than 3 MB for local saving");
+      setStatus("Background image is too large to save locally");
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      if (typeof reader.result !== "string") return;
+      setImageError(false);
+      setBackgroundImage({ url: reader.result, meta: { name: file.name, includedInPng: true } });
+      setBackgroundImageFit("contain");
+      setStatus("Background image loaded and saved locally");
+    });
+    reader.addEventListener("error", () => {
+      setImageError(true);
+      setStatus("This image could not be loaded.");
+    });
+    reader.readAsDataURL(file);
   };
 
   const removeBackgroundImage = () => {
-    releaseUploadedBackground();
     setBackgroundImage(null);
     setImageError(false);
     setOpenPopover(null);
@@ -191,36 +231,72 @@ export default function App() {
     setToast("Background image removed");
   };
 
-  const openBlankBoard = () => {
-    releaseUploadedBackground();
-    dispatch({ type: "reset", annotations: [] });
-    setBackground(DEFAULT_BACKGROUND);
-    setBackgroundImage(null);
-    setBackgroundImageFit("contain");
+  const loadDocumentIntoCanvas = useCallback((document: WorkspaceDocument) => {
+    dispatch({ type: "reset", annotations: document.annotations });
+    setBackground(document.background);
+    setBackgroundImage(document.backgroundImage
+      ? { url: document.backgroundImage.url, meta: document.backgroundImage.meta }
+      : null);
+    setBackgroundImageFit(document.backgroundImage?.fit ?? "contain");
     setImageError(false);
     setTool("pen");
     setBrush(defaultBrush);
     setOpenPopover(null);
     setDocumentMenuOpen(false);
-    setDocumentKind("blank");
+    setRenameDraft(null);
+  }, []);
+
+  const switchDocument = (document: WorkspaceDocument) => {
+    setSavedWorkspace((current) => ({ ...current, activeDocumentId: document.id }));
+    loadDocumentIntoCanvas(document);
+    setStatus(`${document.title} ready`);
+  };
+
+  const openBlankBoard = () => {
+    const blankCount = savedWorkspace.documents.filter(({ kind }) => kind === "blank").length;
+    const document = createBlankDocument(blankCount + 1);
+    setSavedWorkspace((current) => ({
+      ...current,
+      activeDocumentId: document.id,
+      documents: [...current.documents, document],
+    }));
+    loadDocumentIntoCanvas(document);
     setStatus("New blank board ready");
     setToast("New blank board created");
   };
 
   const openExample = () => {
-    releaseUploadedBackground();
-    dispatch({ type: "reset", annotations: demoAnnotations });
-    setBackground(demoBackground);
-    setBackgroundImage(demoBackgroundImage);
-    setBackgroundImageFit("cover");
-    setImageError(false);
-    setTool("pen");
-    setBrush(defaultBrush);
-    setOpenPopover(null);
-    setDocumentMenuOpen(false);
-    setDocumentKind("example");
-    setStatus("Example board loaded");
-    setToast("AI Dashboard Feedback example loaded");
+    const example = savedWorkspace.documents.find(({ kind }) => kind === "example");
+    if (example) switchDocument(example);
+  };
+
+  const saveDocumentTitle = () => {
+    const title = renameDraft?.trim();
+    if (!title) return;
+    setSavedWorkspace((current) => ({
+      ...current,
+      documents: current.documents.map((document) => document.id === current.activeDocumentId
+        ? { ...document, title, updatedAt: new Date().toISOString() }
+        : document),
+    }));
+    setRenameDraft(null);
+    setToast("Board renamed");
+  };
+
+  const deleteDocument = (documentId: string) => {
+    const document = savedWorkspace.documents.find(({ id }) => id === documentId);
+    if (!document || document.kind === "example") return;
+    const remaining = savedWorkspace.documents.filter(({ id }) => id !== documentId);
+    const nextActive = documentId === savedWorkspace.activeDocumentId
+      ? remaining.find(({ kind }) => kind === "example") ?? remaining[0]
+      : activeDocument;
+    setSavedWorkspace((current) => ({
+      ...current,
+      activeDocumentId: nextActive.id,
+      documents: current.documents.filter(({ id }) => id !== documentId),
+    }));
+    if (documentId === savedWorkspace.activeDocumentId) loadDocumentIntoCanvas(nextActive);
+    setToast(`${document.title} deleted`);
   };
 
   const handleBackgroundImageStatus = useCallback((nextStatus: "loaded" | "error") => {
@@ -262,26 +338,67 @@ export default function App() {
               setDocumentMenuOpen((current) => !current);
             }}
           >
-            <strong>{documentKind === "example" ? "AI Dashboard Feedback" : "Untitled board"}</strong>
-            <span>{documentKind === "example" ? "Example" : "Blank"}</span>
+            <strong>{activeDocument.title}</strong>
+            <span>{activeDocument.kind === "example" ? "Example" : "Saved"}</span>
             <CaretDown size={13} aria-hidden="true" />
           </button>
           {documentMenuOpen && (
             <div className="document-menu" role="menu" aria-label="Boards">
-              <button type="button" role="menuitem" onClick={openExample}>
-                <span className="document-menu__preview" aria-hidden="true" />
-                <span><strong>AI Dashboard Feedback</strong><small>Reload the annotated example</small></span>
-              </button>
+              <div className="document-menu__heading"><strong>Your boards</strong><small>Saved in this browser</small></div>
+              <div className="document-menu__list">
+                {savedWorkspace.documents.map((document) => (
+                  <div className={document.id === activeDocument.id ? "document-row is-active" : "document-row"} key={document.id}>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      aria-current={document.id === activeDocument.id ? "page" : undefined}
+                      onClick={() => document.kind === "example" ? openExample() : switchDocument(document)}
+                    >
+                      <span className={document.kind === "example" ? "document-menu__preview" : "document-menu__board"} aria-hidden="true" />
+                      <span><strong>{document.title}</strong><small>{document.annotations.length} annotations · {document.kind === "example" ? "Example" : "Local board"}</small></span>
+                    </button>
+                    {document.kind !== "example" && (
+                      <button type="button" className="document-row__delete" aria-label={`Delete ${document.title}`} onClick={() => deleteDocument(document.id)}>
+                        <Trash size={15} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
               <button type="button" role="menuitem" onClick={openBlankBoard}>
                 <span className="document-menu__new" aria-hidden="true"><Plus size={16} /></span>
                 <span><strong>New blank board</strong><small>Start without an image or annotations</small></span>
               </button>
+              {renameDraft === null ? (
+                <button type="button" role="menuitem" onClick={() => setRenameDraft(activeDocument.title)}>
+                  <span className="document-menu__new" aria-hidden="true"><PencilSimple size={16} /></span>
+                  <span><strong>Rename current board</strong><small>Give this board a recognizable name</small></span>
+                </button>
+              ) : (
+                <div className="document-rename">
+                  <label htmlFor="board-title">Board name</label>
+                  <div>
+                    <input
+                      id="board-title"
+                      value={renameDraft}
+                      autoFocus
+                      onChange={(event) => setRenameDraft(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") saveDocumentTitle();
+                        if (event.key === "Escape") setRenameDraft(null);
+                      }}
+                    />
+                    <button type="button" aria-label="Save board name" onClick={saveDocumentTitle}><Check size={16} /></button>
+                    <button type="button" aria-label="Cancel rename" onClick={() => setRenameDraft(null)}><X size={16} /></button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
         <div className="top-actions">
           <button type="button" className="header-button mobile-new-board" aria-label="New blank board" onClick={openBlankBoard}><Plus size={16} /></button>
-          <span className="saved-state"><CloudCheck size={16} />Saved 2m ago</span>
+          <span className={isLocallySaved ? "saved-state" : "saved-state is-saving"}><CloudCheck size={16} />{isLocallySaved ? "Saved locally" : "Saving…"}</span>
           <button type="button" className="header-button" onClick={shareWorkspace}><ShareNetwork size={16} />Share</button>
           <button type="button" className="header-button header-button--primary" onClick={exportJson}><Export size={16} />Export JSON</button>
         </div>
@@ -337,7 +454,10 @@ export default function App() {
             type="file"
             accept="image/*"
             aria-label="Choose background image"
-            onChange={(event) => chooseBackgroundImage(event.target.files?.[0])}
+            onChange={(event) => {
+              chooseBackgroundImage(event.target.files?.[0]);
+              event.currentTarget.value = "";
+            }}
           />
         </section>
 
