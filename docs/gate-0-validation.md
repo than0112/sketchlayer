@@ -14,6 +14,8 @@ Give every participant the same dashboard screen and five change requests: empha
 
 Use the `AI Dashboard Feedback` example for familiarization only. The timed task must start on a new blank board with the supplied target image so the result is not pre-annotated.
 
+The moderator script, fixed task brief, scoring sheet, and evidence checklist are in the [participant study kit](./participant-study-kit.md).
+
 ## Success metrics
 
 | Metric | Definition | Go threshold |
