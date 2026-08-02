@@ -18,7 +18,7 @@
 - [x] Add Problem Circle, Suggestion Arrow, and Preserve Marker AI shape presets.
 - [x] Add selection-only metadata editing and Annotation Inspector save/cancel behavior.
 - [x] Keep incomplete annotations visible while disabling agent export until target and note are complete.
-- [ ] Validate the full 0.2 flow with at least three target users before adding 0.3 features (protocol: `docs/gate-0-validation.md`).
+- [-] Validate the full 0.2 flow with at least three target users before adding 0.3 features (owner deferred on 2026-08-02; protocol: `docs/gate-0-validation.md`).
 
 ## Reference-alignment UI pass
 
@@ -53,8 +53,8 @@
 
 - [-] 冷卻期與憲法 §7.2 重審：由 2026-08-01 owner Go 決策明確豁免。
 - [-] WIP 啟動限制：由 2026-08-01 owner Go 決策明確豁免。
-- [ ] 訪談至少 3 位目標使用者，驗證「AI 生成介面 → 人工圈選／標記 → 結構化回饋給 agent」流程（保留為 discovery debt）。
-- [ ] 收集至少 1 份外部行為證據，而非只有口頭興趣（保留為 discovery debt）。
+- [-] 訪談至少 3 位目標使用者，驗證「AI 生成介面 → 人工圈選／標記 → 結構化回饋給 agent」（owner 於 2026-08-02 明確延後；保留為 discovery debt）。
+- [-] 收集至少 1 份外部行為證據，而非只有口頭興趣（owner 於 2026-08-02 明確延後；保留為 discovery debt）。
 - [-] 無產品程式碼 mock：因 owner 已授權直接實作 Phase 1，不再作為前置條件。
 - [x] 定義 Phase 1 實測成功門檻：完成時間、回饋正確率、agent 可解析率、再次使用意願（見 `docs/gate-0-validation.md`）。
 - [x] 重新比較 tldraw、Excalidraw、Fabric.js、perfect-freehand 的可嵌入性、授權、bundle size 與缺口（2026-08-02，見 `docs/canvas-engine-evaluation.md`）。
