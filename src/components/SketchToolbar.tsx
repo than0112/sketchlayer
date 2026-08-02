@@ -1,9 +1,11 @@
-import { ArrowBendUpLeft } from "@phosphor-icons/react/dist/csr/ArrowBendUpLeft";
-import { ArrowBendUpRight } from "@phosphor-icons/react/dist/csr/ArrowBendUpRight";
-import { Eraser } from "@phosphor-icons/react/dist/csr/Eraser";
-import { Highlighter } from "@phosphor-icons/react/dist/csr/Highlighter";
-import { PenNib } from "@phosphor-icons/react/dist/csr/PenNib";
-import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+import {
+  ArrowBendUpLeft,
+  ArrowBendUpRight,
+  Eraser,
+  Highlighter,
+  PenNib,
+  Trash,
+} from "@phosphor-icons/react";
 import type { BrushStyle, DrawingTool } from "../lib/types";
 
 export type SketchToolbarProps = {

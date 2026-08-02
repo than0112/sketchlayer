@@ -1,7 +1,7 @@
 {
   "name": "sketchlayer",
   "private": false,
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A lightweight React layer for AI-readable visual annotation.",
   "license": "MIT",
   "repository": {
