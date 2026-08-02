@@ -1,7 +1,7 @@
 {
   "name": "sketchlayer",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.2.0",
   "description": "A lightweight React layer for AI-readable visual annotation.",
   "license": "MIT",
   "keywords": [
@@ -14,6 +14,34 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "main": "./dist-lib/sketchlayer.js",
+  "module": "./dist-lib/sketchlayer.js",
+  "types": "./dist-lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/index.d.ts",
+      "import": "./dist-lib/sketchlayer.js"
+    },
+    "./pro": {
+      "types": "./dist-lib/pro/index.d.ts",
+      "import": "./dist-lib/pro.js"
+    },
+    "./pro.css": "./dist-lib/pro.css",
+    "./styles.css": "./dist-lib/styles.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist-lib",
+    "docs/api.md",
+    "docs/publishing.md",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "type": "module",
   "packageManager": "npm@11.6.2",
   "engines": {
@@ -21,22 +49,41 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:app && npm run build:lib",
+    "build:app": "tsc -b && vite build",
+    "build:lib": "node scripts/clean-package.mjs && vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json && node scripts/prepare-package.mjs",
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
-    "preview": "vite preview"
+    "test:e2e": "playwright test",
+    "preview": "vite preview",
+    "package:check": "npm run build:lib && npm pack --dry-run --ignore-scripts --cache .npm-cache",
+    "prepack": "npm run build:lib"
   },
   "dependencies": {
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "@phosphor-icons/react": "2.1.10",
+    "perfect-freehand": "^1.2.3",
+    "react-aria-components": "^1.20.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "sketchlayer": {
+    "bundleSizeBudgetBytes": 35000,
+    "coreGzipBudgetBytes": 7000,
+    "proGzipBudgetBytes": 75000
   },
   "devDependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@playwright/test": "^1.62.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "6.0.5",
     "jsdom": "29.1.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "typescript": "6.0.3",
     "vite": "8.2.0",
     "vitest": "4.1.10"

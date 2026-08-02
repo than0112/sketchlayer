@@ -1,7 +1,7 @@
 import { colorTemplates } from "../lib/templates";
 import type { SemanticColor } from "../lib/types";
 
-type ColorTemplatePickerProps = {
+export type ColorTemplatePickerProps = {
   selectedColor: string;
   onSelect: (templateName: string, color: SemanticColor) => void;
 };

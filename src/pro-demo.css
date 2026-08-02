@@ -1,0 +1,27 @@
+.sketchlayer-pro-demo { min-height: 100vh; background: #f8f9fb; color: #172033; }
+.sketchlayer-pro-demo__header { display: flex; justify-content: space-between; align-items: center; height: 66px; padding: 0 24px; border-bottom: 1px solid #e4e7ed; background: #fff; }
+.sketchlayer-pro-demo__header > div { display: flex; gap: 11px; align-items: center; }
+.sketchlayer-pro-demo__header > div > span:last-child { padding: 4px 7px; border: 1px solid #dce1ea; border-radius: 6px; color: #667085; font-size: 11px; }
+.sketchlayer-pro-demo__logo { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 8px; background: #2563eb; color: #fff; font-weight: 700; }
+.sketchlayer-pro-demo__header button { padding: 10px 16px; border: 0; border-radius: 9px; background: #2563eb; color: #fff; font-weight: 700; }
+.sketchlayer-pro-demo__header button:disabled { opacity: .45; }
+.sketchlayer-pro-demo__workspace { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: calc(100vh - 67px); }
+.sketchlayer-pro-demo__canvas-wrap { position: relative; min-width: 0; padding: 36px 40px 120px; background-image: radial-gradient(#d9dde6 1px, transparent 1px); background-size: 20px 20px; }
+.sketchlayer-pro-demo__canvas-wrap .sketch-canvas { width: 100%; height: min(62vw, 660px); border: 1px solid #dce1ea; border-radius: 16px; background: white; box-shadow: 0 12px 35px rgb(15 23 42 / 10%); }
+.sketchlayer-pro-demo__toolbar-wrap { position: absolute; z-index: 5; bottom: 34px; left: 50%; transform: translateX(-50%); }
+.sketchlayer-pro-demo__popover { position: absolute; bottom: 78px; left: 50%; transform: translateX(-50%); }
+.sketchlayer-pro-demo__draw-modes { position: relative; z-index: 1; display: flex; gap: 6px; padding: 13px 18px 0; margin-bottom: -8px; background: white; border-radius: 16px 16px 0 0; }
+.sketchlayer-pro-demo__draw-modes button { padding: 7px 11px; border: 1px solid #dce1ea; border-radius: 8px; background: #fff; }
+.sketchlayer-pro-demo__draw-modes button[data-active] { border-color: #8db0ff; background: #eaf0ff; color: #2563eb; }
+.sketchlayer-pro-demo__side { padding: 18px; border-left: 1px solid #e4e7ed; background: #fff; }
+.sketchlayer-pro-demo__side .sketchlayer-pro-inspector { width: 100%; box-shadow: none; }
+.sketchlayer-pro-demo__empty { padding: 18px; border: 1px solid #e4e7ed; border-radius: 14px; }
+.sketchlayer-pro-demo__empty p { color: #778094; font-size: 13px; line-height: 1.5; }
+.sketchlayer-pro-demo__sent { display: block; margin-top: 12px; padding: 11px; border-radius: 9px; background: #eaf8ef; color: #247840; font-size: 12px; }
+.sketchlayer-pro-demo pre { max-width: 315px; max-height: 260px; overflow: auto; font-size: 10px; }
+@media (max-width: 800px) {
+  .sketchlayer-pro-demo__workspace { display: block; }
+  .sketchlayer-pro-demo__side { min-height: 180px; border-top: 1px solid #e4e7ed; border-left: 0; }
+  .sketchlayer-pro-demo__canvas-wrap { padding: 20px 12px 120px; }
+  .sketchlayer-pro-demo__canvas-wrap .sketch-canvas { height: 58vh; }
+}

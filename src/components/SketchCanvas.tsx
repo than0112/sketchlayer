@@ -12,8 +12,8 @@ import { CANVAS_SIZE, DEFAULT_BACKGROUND } from "../lib/serialization";
 import type {
   Annotation,
   BrushStyle,
+  CanvasTool,
   CanvasBackground,
-  DrawingTool,
   Point,
   ShapeAnnotation,
   SketchValue,
@@ -24,20 +24,24 @@ export type SketchCanvasHandle = {
   exportPng: () => Promise<Blob>;
 };
 
-type SketchCanvasProps = {
+export type SketchCanvasProps = {
   value?: SketchValue;
   defaultValue?: SketchValue;
   onChange?: (value: SketchValue) => void;
-  tool: DrawingTool;
+  tool: CanvasTool;
   brush: BrushStyle;
   background?: CanvasBackground;
   backgroundImage?: string;
+  backgroundImageFit?: "contain" | "cover";
   onBackgroundImageStatus?: (status: "loaded" | "error") => void;
   readonly?: boolean;
   label?: string;
+  className?: string;
+  selectedAnnotationId?: string | null;
+  onAnnotationSelect?: (id: string | null) => void;
 };
 
-const isShapeTool = (tool: DrawingTool): tool is ShapeAnnotation["shape"] =>
+const isShapeTool = (tool: CanvasTool): tool is ShapeAnnotation["shape"] =>
   tool === "arrow" || tool === "rectangle" || tool === "circle";
 
 const drawStroke = (context: CanvasRenderingContext2D, stroke: Stroke) => {
@@ -51,6 +55,16 @@ const drawStroke = (context: CanvasRenderingContext2D, stroke: Stroke) => {
   context.lineWidth = stroke.size;
   context.lineCap = "round";
   context.lineJoin = "round";
+
+  if (stroke.outline && stroke.outline.length > 2) {
+    context.beginPath();
+    context.moveTo(stroke.outline[0].x, stroke.outline[0].y);
+    stroke.outline.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+    context.closePath();
+    context.fill();
+    context.restore();
+    return;
+  }
 
   if (rest.length === 0) {
     context.beginPath();
@@ -122,10 +136,42 @@ const drawAnnotation = (context: CanvasRenderingContext2D, annotation: Annotatio
   else drawShape(context, annotation);
 };
 
+const annotationBounds = (annotation: Annotation) => {
+  if (annotation.type === "shape") {
+    return {
+      x: Math.min(annotation.x, annotation.x + annotation.width),
+      y: Math.min(annotation.y, annotation.y + annotation.height),
+      width: Math.abs(annotation.width),
+      height: Math.abs(annotation.height),
+    };
+  }
+  const points = annotation.outline?.length ? annotation.outline : annotation.points;
+  const xs = points.map((point) => point.x);
+  const ys = points.map((point) => point.y);
+  const padding = annotation.size;
+  return {
+    x: Math.min(...xs) - padding,
+    y: Math.min(...ys) - padding,
+    width: Math.max(...xs) - Math.min(...xs) + padding * 2,
+    height: Math.max(...ys) - Math.min(...ys) + padding * 2,
+  };
+};
+
+const drawSelection = (context: CanvasRenderingContext2D, annotation: Annotation) => {
+  const bounds = annotationBounds(annotation);
+  context.save();
+  context.strokeStyle = "#2563eb";
+  context.lineWidth = 1.5;
+  context.setLineDash([6, 4]);
+  context.strokeRect(bounds.x - 5, bounds.y - 5, bounds.width + 10, bounds.height + 10);
+  context.restore();
+};
+
 const drawBackground = (
   context: CanvasRenderingContext2D,
   background: CanvasBackground,
   image: HTMLImageElement | null,
+  imageFit: "contain" | "cover",
 ) => {
   context.save();
   context.globalAlpha = 1;
@@ -149,7 +195,8 @@ const drawBackground = (
   context.fillRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height);
 
   if (image) {
-    const scale = Math.min(CANVAS_SIZE.width / image.naturalWidth, CANVAS_SIZE.height / image.naturalHeight);
+    const scaleMethod = imageFit === "cover" ? Math.max : Math.min;
+    const scale = scaleMethod(CANVAS_SIZE.width / image.naturalWidth, CANVAS_SIZE.height / image.naturalHeight);
     const width = image.naturalWidth * scale;
     const height = image.naturalHeight * scale;
     context.drawImage(image, (CANVAS_SIZE.width - width) / 2, (CANVAS_SIZE.height - height) / 2, width, height);
@@ -181,9 +228,13 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
     brush,
     background = DEFAULT_BACKGROUND,
     backgroundImage,
+    backgroundImageFit = "contain",
     onBackgroundImageStatus,
     readonly = false,
     label = "SketchLayer drawing canvas",
+    className,
+    selectedAnnotationId,
+    onAnnotationSelect,
   },
   forwardedRef,
 ) {
@@ -230,7 +281,7 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
             reject(new Error("Canvas export context is unavailable."));
             return;
           }
-          drawBackground(context, background, loadedImage);
+          drawBackground(context, background, loadedImage, backgroundImageFit);
           visibleAnnotations.forEach((annotation) => drawAnnotation(context, annotation));
           output.toBlob((blob) => {
             if (blob) resolve(blob);
@@ -238,7 +289,7 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
           }, "image/png");
         }),
     }),
-    [background, loadedImage, visibleAnnotations],
+    [background, backgroundImageFit, loadedImage, visibleAnnotations],
   );
 
   useEffect(() => {
@@ -299,10 +350,12 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
       0,
     );
     context.clearRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height);
-    drawBackground(context, background, loadedImage);
+    drawBackground(context, background, loadedImage, backgroundImageFit);
     visibleAnnotations.forEach((annotation) => drawAnnotation(context, annotation));
+    const selected = visibleAnnotations.find((annotation) => annotation.id === selectedAnnotationId);
+    if (selected) drawSelection(context, selected);
     if (draft) drawAnnotation(context, draft);
-  }, [background, draft, loadedImage, viewport, visibleAnnotations]);
+  }, [background, backgroundImageFit, draft, loadedImage, selectedAnnotationId, viewport, visibleAnnotations]);
 
   const pointFromEvent = (event: React.PointerEvent<HTMLCanvasElement>): Point => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -326,9 +379,13 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
   const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (readonly || pointerIdRef.current !== null || event.button !== 0) return;
     event.preventDefault();
+    const point = pointFromEvent(event);
+    if (tool === "select") {
+      onAnnotationSelect?.(findAnnotationAtPoint(currentValue.annotations, point)?.id ?? null);
+      return;
+    }
     pointerIdRef.current = event.pointerId;
     event.currentTarget.setPointerCapture(event.pointerId);
-    const point = pointFromEvent(event);
 
     if (tool === "eraser") {
       eraseBaseRef.current = currentValue.annotations;
@@ -416,7 +473,7 @@ export const SketchCanvas = forwardRef<SketchCanvasHandle, SketchCanvasProps>(fu
   return (
     <canvas
       ref={canvasRef}
-      className={`sketch-canvas sketch-canvas--${tool}`}
+      className={["sketch-canvas", `sketch-canvas--${tool}`, className].filter(Boolean).join(" ")}
       aria-label={label}
       aria-readonly={readonly}
       role="img"

@@ -7,6 +7,7 @@ export type Point = {
 export type StrokeTool = "pen" | "highlighter";
 export type ShapeTool = "arrow" | "rectangle" | "circle";
 export type DrawingTool = StrokeTool | ShapeTool | "eraser";
+export type CanvasTool = DrawingTool | "select";
 
 export type SemanticIntent =
   | "problem"
@@ -20,6 +21,33 @@ export type SemanticColorMeta = {
   template: string;
   label: string;
   intent: SemanticIntent;
+};
+
+/** @deprecated Use InstructionMeta for new agent-readable annotations. */
+export type FeedbackMeta = {
+  action: "circle" | "move" | "comment" | "highlight";
+  selector: string;
+  note: string;
+  severity: "low" | "medium" | "high";
+};
+
+export type TargetRef =
+  | { kind: "selector"; value: string; label?: string }
+  | { kind: "region"; id: string; label?: string };
+
+export type InstructionOperation = "comment" | "move" | "preserve" | "approve" | "emphasize";
+
+export type InstructionMeta = {
+  operation: InstructionOperation;
+  target: TargetRef;
+  note: string;
+  severity: "low" | "medium" | "high";
+};
+
+export type ProBrushMeta = {
+  smoothing: number;
+  pressure: boolean;
+  engine: "perfect-freehand";
 };
 
 export type SemanticColor = {
@@ -53,6 +81,10 @@ export type Stroke = {
   size: number;
   opacity: number;
   semanticColor?: SemanticColorMeta;
+  feedback?: FeedbackMeta;
+  instruction?: InstructionMeta;
+  proBrush?: ProBrushMeta;
+  outline?: Point[];
 };
 
 export type ShapeAnnotation = {
@@ -69,6 +101,8 @@ export type ShapeAnnotation = {
   opacity: number;
   dashed?: boolean;
   semanticColor?: SemanticColorMeta;
+  feedback?: FeedbackMeta;
+  instruction?: InstructionMeta;
 };
 
 export type Annotation = Stroke | ShapeAnnotation;

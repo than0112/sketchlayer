@@ -1,37 +1,128 @@
 # SketchLayer
 
-SketchLayer 是一個輕量 React 視覺標註層，讓人類畫下回饋，同時產生可被 AI workflow 解析的結構化 JSON。它專注於嵌入式標註，不是通用白板。
+An embeddable React layer for turning visual annotations into AI-readable data. SketchLayer provides a high-DPI Canvas 2D renderer, pointer input, semantic colors, immutable undo/redo history, and versioned JSON export without becoming a general-purpose whiteboard.
 
-目前完成 Phase 2 MVP：
+## Install
 
-- 高 DPI Canvas 2D state-backed render loop
-- Pointer Events 的 Pen、Highlighter 與物件級 Eraser
-- Undo、Redo、Clear（Clear 可復原）
-- Product Feedback 語意色彩與 metadata
-- Arrow、Rectangle、Circle drag-create
-- Product Feedback 與 Teaching 語意色彩
-- Brush size、opacity 與 6 組 gradient presets
-- Background image、Live JSON、PNG 與 JSON 下載
-- Responsive floating toolbar、鍵盤快捷鍵與 accessible labels
+```bash
+npm install sketchlayer react react-dom
+```
 
-## 開發環境
+Import the component styles once:
 
-- Node.js 20.19+ 或 22.12+
-- npm 11（以 `package-lock.json` 鎖定依賴）
+```ts
+import "sketchlayer/styles.css";
+```
+
+## Minimal integration
+
+The smallest uncontrolled canvas is three lines:
+
+```tsx
+<div style={{ width: 960, height: 540 }}>
+  <SketchCanvas tool="pen" brush={{ color: "#111827", size: 4, opacity: 1 }} />
+</div>
+```
+
+For a complete controlled experience:
+
+```tsx
+import { SketchCanvas, SketchToolbar, useSketchLayer } from "sketchlayer";
+import "sketchlayer/styles.css";
+
+export function FeedbackLayer() {
+  const sketch = useSketchLayer();
+
+  return (
+    <div style={{ width: 960 }}>
+      <div style={{ height: 540 }}>
+        <SketchCanvas
+          value={sketch.value}
+          onChange={sketch.onCanvasChange}
+          tool={sketch.tool}
+          brush={sketch.brush}
+        />
+      </div>
+      <SketchToolbar
+        tool={sketch.tool}
+        brush={sketch.brush}
+        canUndo={sketch.canUndo}
+        canRedo={sketch.canRedo}
+        canClear={sketch.annotations.length > 0}
+        onToolChange={sketch.setTool}
+        onBrushChange={sketch.setBrush}
+        onUndo={sketch.undo}
+        onRedo={sketch.redo}
+        onClear={sketch.clear}
+      />
+    </div>
+  );
+}
+```
+
+## Public API
+
+- `SketchCanvas` — controlled or uncontrolled annotation canvas.
+- `SketchToolbar` — accessible starter toolbar for pen, highlighter, eraser, history, color, and size.
+- `ColorTemplatePicker` — Product Feedback and Teaching semantic color templates.
+- `GradientCreator` — six canvas background presets.
+- `useSketchLayer` — immutable annotation history, active tool, and brush state.
+- Serialization helpers — versioned JSON creation, parsing, and serialization.
+- TypeScript types — annotation, brush, background, semantic color, and document contracts.
+
+See [API reference](./docs/api.md), [examples](./examples), and [publishing guide](./docs/publishing.md).
+
+## Pro 0.2 (optional)
+
+The Pro entry adds AI shapes, accessible color controls, natural freehand strokes, and structured instruction editing without increasing the core entry bundle.
+
+```tsx
+import { SketchCanvas } from "sketchlayer";
+import { ProToolbar, useProSketchLayer } from "sketchlayer/pro";
+import "sketchlayer/styles.css";
+import "sketchlayer/pro.css";
+
+const pro = useProSketchLayer({
+  resolveTarget: ({ anchor }) => ({ kind: "region", id: `${anchor.x}:${anchor.y}` }),
+});
+
+<SketchCanvas
+  value={pro.value}
+  onChange={pro.onCanvasChange}
+  tool={pro.tool}
+  brush={pro.canvasBrush}
+  selectedAnnotationId={pro.selectedAnnotationId}
+  onAnnotationSelect={pro.selectAnnotation}
+/>;
+<ProToolbar
+  tool={pro.tool}
+  activePanel={pro.activePanel}
+  canSend={pro.canSend}
+  onToolChange={pro.setTool}
+  onPanelChange={pro.setActivePanel}
+/>;
+```
+
+Open the local demo at `/#pro`. `templates`, `brandPalette`, and `onTemplatesChange` are controlled by the host; SketchLayer never writes them to local storage.
+
+## Development
 
 ```bash
 npm install
 npm run dev
-```
-
-## 品質檢查
-
-```bash
-npm run typecheck
 npm test
+npm run test:e2e
+npm run typecheck
 npm run build
+npm run package:check
 ```
 
-此工作區位於 OneDrive；為避免同步程序鎖住 `dist` 時讓重複建置失敗，Vite 不會自動清空該資料夾。`dist` 不納入版本控制，CI／發布環境會從乾淨工作目錄建置。
+`npm run build` produces the demo application in `dist/` and the ESM package with declarations in `dist-lib/`.
 
-工作範圍、決策債與後續任務請見 [`tasks.md`](./tasks.md)。正式解封決策見 [`docs/decisions/001-unarchive-phase-1.md`](./docs/decisions/001-unarchive-phase-1.md)。
+## Browser support
+
+SketchLayer targets modern browsers with Canvas 2D, Pointer Events, ResizeObserver, and ES2022 support. Mouse, touch, and pressure data are normalized through Pointer Events.
+
+## License
+
+MIT

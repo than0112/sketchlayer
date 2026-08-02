@@ -1,5 +1,31 @@
 # SketchLayer Tasks
 
+## Demo and blank-board workflow
+
+- [x] Keep AI Dashboard Feedback as the initial annotated example.
+- [x] Add a document switcher that creates a clean, untitled board.
+- [x] Reset background image, annotations, history, and JSON for a blank board.
+- [x] Let users remove a background image independently from annotation erasing.
+
+## Phase 4 — SketchLayer Pro 0.2
+
+- [x] Add optional `sketchlayer/pro` and `sketchlayer/pro.css` package entries.
+- [x] Add `InstructionMeta`, `TargetRef`, target resolver, and legacy `FeedbackMeta` compatibility.
+- [x] Add Color Studio with React Aria controls, semantic binding, brand colors, opacity, and controlled templates.
+- [x] Add Brush Studio with size, opacity, smoothing, pressure, and `perfect-freehand` outlines.
+- [x] Add Problem Circle, Suggestion Arrow, and Preserve Marker AI shape presets.
+- [x] Add selection-only metadata editing and Annotation Inspector save/cancel behavior.
+- [x] Keep incomplete annotations visible while disabling agent export until target and note are complete.
+- [ ] Validate the full 0.2 flow with at least three target users before adding 0.3 features.
+
+## Reference-alignment UI pass
+
+- [x] Align the desktop workspace to reference image 2 at 1487 × 1058.
+- [x] Add the Acme Analytics annotation scenario and five structured feedback cards.
+- [x] Align the top bar, left tool rail, central canvas, floating toolbar, and right JSON panel.
+- [x] Verify Send to Agent interaction and responsive behavior at 390 × 844.
+- [x] Complete the side-by-side visual review in `design-qa.md` with `final result: passed`.
+
 更新日期：2026-08-01
 目前狀態：**已正式解除封存；Phase 2 MVP 完成。**
 
@@ -75,14 +101,14 @@
 
 ## Phase 3 — 套件化與發布準備（MVP 通過後）
 
-- [ ] 拆出 `SketchCanvas`、`SketchToolbar`、`ColorTemplatePicker`、`GradientCreator`、`useSketchLayer` 公開 API。
-- [ ] 驗證最簡使用方式不超過五行，並加入完整 TypeScript types。
-- [ ] 設計 tree-shakable exports、CSS variables 與最小必要 CSS import。
-- [ ] 建立 package build、exports map、types、peer dependencies 與 bundle-size budget。
-- [ ] 建立 Basic、Image Annotation、Teaching、AI Feedback demos。
-- [ ] 撰寫安裝、受控模式、匯出與無障礙文件。
-- [ ] 加入單元、互動、匯出 snapshot 與跨瀏覽器測試。
-- [ ] 發布前確認 npm 名稱、版本策略、授權與 supply-chain 安全設定。
+- [x] 拆出 `SketchCanvas`、`SketchToolbar`、`ColorTemplatePicker`、`GradientCreator`、`useSketchLayer` 公開 API。
+- [x] 驗證最簡使用方式不超過五行，並加入完整 TypeScript types。
+- [x] 設計 tree-shakable exports、CSS variables 與最小必要 CSS import。
+- [x] 建立 package build、exports map、types、peer dependencies 與 35 KB bundle-size budget。
+- [x] 建立 Basic、Image Annotation、Teaching、AI Feedback demos。
+- [x] 撰寫安裝、受控模式、匯出與無障礙文件。
+- [x] 加入單元、互動、匯出 snapshot 與 Chromium／Firefox／WebKit CI 測試。
+- [!] 版本、MIT、provenance 與 supply-chain checklist 已完成；2026-08-01 registry 查無 `sketchlayer`，但 repository URL 與 npm owner 登入仍須在真正發布前確認。
 
 ## 明確不在 MVP
 

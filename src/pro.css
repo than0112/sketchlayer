@@ -1,0 +1,167 @@
+.sketchlayer-pro-toolbar,
+.sketchlayer-pro-panel,
+.sketchlayer-pro-inspector {
+  box-sizing: border-box;
+  color: #172033;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.sketchlayer-pro-toolbar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: max-content;
+  padding: 8px;
+  border: 1px solid #e2e6ee;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 12px 32px rgb(15 23 42 / 14%);
+}
+
+.sketchlayer-pro-toolbar__button {
+  display: grid;
+  min-width: 66px;
+  min-height: 54px;
+  place-items: center;
+  gap: 3px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #5e687b;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sketchlayer-pro-toolbar__button:hover { background: #f4f6fa; color: #172033; }
+.sketchlayer-pro-toolbar__button[data-active] { background: #eaf0ff; color: #2563eb; }
+.sketchlayer-pro-toolbar__button:disabled { cursor: not-allowed; opacity: 0.45; }
+.sketchlayer-pro-toolbar__button:focus-visible,
+.sketchlayer-pro-panel button:focus-visible,
+.sketchlayer-pro-inspector button:focus-visible { outline: 3px solid rgb(37 99 235 / 30%); outline-offset: 2px; }
+
+.sketchlayer-pro-icon { width: 20px; height: 20px; border: 2px solid currentcolor; border-radius: 5px; }
+.sketchlayer-pro-icon--select { border-width: 0 0 2px 2px; border-radius: 0; transform: rotate(45deg) scale(.75); }
+.sketchlayer-pro-icon--draw { width: 17px; height: 5px; border-width: 0 0 3px; border-radius: 0; transform: rotate(-42deg); }
+.sketchlayer-pro-icon--shape { border-radius: 50%; }
+.sketchlayer-pro-icon--color { border-radius: 50%; box-shadow: inset 8px 0 #2563eb; }
+.sketchlayer-pro-icon--export { border-width: 0 2px 2px; border-radius: 0; position: relative; }
+
+.sketchlayer-pro-panel,
+.sketchlayer-pro-inspector {
+  width: min(360px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid #e2e6ee;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 98%);
+  box-shadow: 0 18px 45px rgb(15 23 42 / 16%);
+}
+
+.sketchlayer-pro-panel header,
+.sketchlayer-pro-inspector header { display: flex; justify-content: space-between; margin-bottom: 17px; }
+.sketchlayer-pro-panel header strong,
+.sketchlayer-pro-inspector header strong { font-size: 15px; }
+.sketchlayer-pro-panel header p,
+.sketchlayer-pro-inspector header p { margin: 4px 0 0; color: #768095; font-size: 12px; }
+
+.sketchlayer-pro-field { display: grid; gap: 8px; margin: 14px 0; color: #4b5568; font-size: 12px; font-weight: 600; }
+.sketchlayer-pro-field > span { display: flex; justify-content: space-between; }
+.sketchlayer-pro-field output { color: #172033; }
+.sketchlayer-pro-field input:not([type="range"]),
+.sketchlayer-pro-field textarea,
+.sketchlayer-pro-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #dce1ea;
+  border-radius: 9px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-weight: 500;
+}
+.sketchlayer-pro-field textarea { resize: vertical; }
+.sketchlayer-pro-field input[type="range"] { width: 100%; accent-color: #2563eb; }
+.sketchlayer-pro-check { display: flex; gap: 9px; align-items: center; margin-top: 15px; font-size: 13px; }
+.sketchlayer-pro-check input { accent-color: #2563eb; }
+
+.sketchlayer-pro-preset-list { display: grid; gap: 9px; }
+.sketchlayer-pro-preset {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #e5e8ef;
+  border-radius: 11px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sketchlayer-pro-preset:hover,
+.sketchlayer-pro-preset[data-active] { border-color: #8db0ff; background: #f5f8ff; }
+.sketchlayer-pro-preset strong,
+.sketchlayer-pro-preset small { display: block; }
+.sketchlayer-pro-preset small { margin-top: 3px; color: #7b8496; line-height: 1.3; }
+.sketchlayer-pro-preset__mark { display: block; width: 25px; height: 25px; border: 2px solid currentcolor; }
+.sketchlayer-pro-preset__mark--circle { border-radius: 50%; }
+.sketchlayer-pro-preset__mark--arrow { width: 24px; height: 12px; border-width: 0 2px 2px 0; transform: rotate(-35deg); }
+.sketchlayer-pro-preset__mark--rectangle { border-style: dashed; }
+.sketchlayer-pro-severity { padding: 3px 6px; border-radius: 999px; background: #eef1f6; color: #667085; font-size: 10px; text-transform: uppercase; }
+.sketchlayer-pro-severity--high { background: #feecec; color: #c93636; }
+.sketchlayer-pro-severity--medium { background: #fff4db; color: #9a6500; }
+.sketchlayer-pro-severity--low { background: #eaf8ef; color: #247840; }
+
+.sketchlayer-pro-quick-colors { display: flex; justify-content: space-between; gap: 7px; margin-bottom: 16px; }
+.sketchlayer-pro-quick-colors button,
+.sketchlayer-pro-brand button { width: 26px; height: 26px; padding: 0; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d6dbe5; cursor: pointer; }
+.sketchlayer-pro-quick-colors button[aria-pressed="true"] { box-shadow: 0 0 0 2px #2563eb; }
+.sketchlayer-pro-color-controls { display: grid; grid-template-columns: 118px 1fr; gap: 15px; align-items: center; }
+.sketchlayer-pro-color .react-aria-ColorWheel { width: 118px; height: 118px; }
+.sketchlayer-pro-color .react-aria-ColorWheelTrack { width: 100%; height: 100%; }
+.sketchlayer-pro-color .react-aria-ColorThumb { width: 18px; height: 18px; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 0 1px rgb(15 23 42 / 45%), 0 2px 5px rgb(15 23 42 / 25%); }
+.sketchlayer-pro-color .react-aria-ColorArea { width: 100%; height: 108px; border-radius: 10px; }
+.sketchlayer-pro-current-color { display: flex; gap: 9px; align-items: center; margin: 15px 0 5px; }
+.sketchlayer-pro-current-color span { width: 24px; height: 24px; border: 1px solid #dce1ea; border-radius: 7px; }
+.sketchlayer-pro-current-color code { color: #4b5568; font-size: 12px; }
+.sketchlayer-pro-brand > span { display: block; margin-bottom: 8px; color: #4b5568; font-size: 12px; font-weight: 600; }
+.sketchlayer-pro-brand > div { display: flex; gap: 8px; }
+
+.sketchlayer-pro-secondary,
+.sketchlayer-pro-primary { min-height: 38px; padding: 8px 13px; border-radius: 9px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.sketchlayer-pro-secondary { border: 1px solid #dce1ea; background: #fff; color: #344054; }
+.sketchlayer-pro-primary { border: 1px solid #2563eb; background: #2563eb; color: #fff; }
+.sketchlayer-pro-primary:disabled,
+.sketchlayer-pro-secondary:disabled { cursor: not-allowed; opacity: .45; }
+.sketchlayer-pro-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 18px; }
+.sketchlayer-pro-target-kind { display: flex; gap: 16px; margin: 13px 0; padding: 0; border: 0; color: #4b5568; font-size: 12px; }
+.sketchlayer-pro-target-kind legend { margin-bottom: 8px; font-weight: 600; }
+.sketchlayer-pro-target-kind label { display: flex; gap: 6px; align-items: center; }
+.sketchlayer-pro-target-kind input { accent-color: #2563eb; }
+.sketchlayer-pro-resolver { padding: 9px 10px; border-radius: 8px; background: #eef4ff; color: #2856a8; font-size: 12px; }
+.sketchlayer-pro-resolver--manual { background: #fff5df; color: #8b5b08; }
+
+@media (max-width: 640px) {
+  .sketchlayer-pro-toolbar { max-width: calc(100vw - 20px); overflow-x: auto; border-radius: 15px; }
+  .sketchlayer-pro-toolbar__button { min-width: 58px; }
+  .sketchlayer-pro-panel,
+  .sketchlayer-pro-inspector {
+    position: fixed;
+    z-index: 1000;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: min(78vh, 680px);
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketchlayer-pro-toolbar *, .sketchlayer-pro-panel *, .sketchlayer-pro-inspector * { scroll-behavior: auto !important; transition: none !important; }
+}

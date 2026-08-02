@@ -16,6 +16,7 @@ const context = {
   save: vi.fn(),
   restore: vi.fn(),
   beginPath: vi.fn(),
+  closePath: vi.fn(),
   moveTo: vi.fn(),
   lineTo: vi.fn(),
   quadraticCurveTo: vi.fn(),

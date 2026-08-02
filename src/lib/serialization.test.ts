@@ -46,5 +46,28 @@ describe("SketchLayer serialization", () => {
 
     expect(document.canvas.background.type).toBe("gradient");
     expect(document.canvas.backgroundImage).toEqual({ name: "lesson.png", includedInPng: true });
+    expect(document).toMatchInlineSnapshot(`
+      {
+        "annotations": [],
+        "canvas": {
+          "background": {
+            "angle": 135,
+            "css": "linear-gradient(135deg, #f8f7f3, #eef4ff)",
+            "from": "#f8f7f3",
+            "grid": true,
+            "preset": "warm-paper",
+            "to": "#eef4ff",
+            "type": "gradient",
+          },
+          "backgroundImage": {
+            "includedInPng": true,
+            "name": "lesson.png",
+          },
+          "height": 540,
+          "width": 960,
+        },
+        "version": "0.1.0",
+      }
+    `);
   });
 });

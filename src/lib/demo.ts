@@ -1,0 +1,112 @@
+import type { Annotation, CanvasBackground, CanvasImageMeta } from "./types";
+
+export const demoBackground: CanvasBackground = {
+  type: "color",
+  value: "#ffffff",
+  grid: false,
+};
+
+export const demoBackgroundImage = {
+  url: "/assets/acme-analytics-dashboard.png",
+  meta: { name: "acme-analytics-dashboard.png", includedInPng: true } satisfies CanvasImageMeta,
+};
+
+export const demoAnnotations: Annotation[] = [
+  {
+    id: "demo-revenue-circle",
+    type: "shape",
+    shape: "circle",
+    x: 192,
+    y: 142,
+    width: 165,
+    height: 92,
+    strokeColor: "#2563eb",
+    size: 4,
+    opacity: 1,
+    semanticColor: { template: "Product Feedback", label: "Suggestion", intent: "suggestion" },
+    feedback: {
+      action: "circle",
+      selector: ".metric-card:nth-child(1) .value",
+      note: "Increase emphasis",
+      severity: "medium",
+    },
+  },
+  {
+    id: "demo-date-move",
+    type: "shape",
+    shape: "arrow",
+    x: 762,
+    y: 46,
+    width: -14,
+    height: 74,
+    strokeColor: "#f97316",
+    size: 3,
+    opacity: 1,
+    semanticColor: { template: "Product Feedback", label: "Risk", intent: "risk" },
+    feedback: {
+      action: "move",
+      selector: "[data-testid='date-range']",
+      note: "Move date range here",
+      severity: "medium",
+    },
+  },
+  {
+    id: "demo-conversion-comment",
+    type: "shape",
+    shape: "circle",
+    x: 510,
+    y: 144,
+    width: 116,
+    height: 62,
+    strokeColor: "#ef4444",
+    size: 4,
+    opacity: 1,
+    semanticColor: { template: "Product Feedback", label: "Problem", intent: "problem" },
+    feedback: {
+      action: "comment",
+      selector: ".metric-card:nth-child(3) .delta",
+      note: "Use green for positive change",
+      severity: "high",
+    },
+  },
+  {
+    id: "demo-alert-comment",
+    type: "shape",
+    shape: "rectangle",
+    x: 176,
+    y: 430,
+    width: 350,
+    height: 72,
+    strokeColor: "#16a34a",
+    size: 3,
+    opacity: 1,
+    semanticColor: { template: "Product Feedback", label: "Approved", intent: "approved" },
+    feedback: {
+      action: "comment",
+      selector: ".alerts-list",
+      note: "Reduce alert prominence",
+      severity: "low",
+    },
+  },
+  {
+    id: "demo-action-highlight",
+    type: "stroke",
+    tool: "highlighter",
+    points: [
+      { x: 630, y: 472, pressure: 0.5 },
+      { x: 660, y: 469, pressure: 0.5 },
+      { x: 705, y: 470, pressure: 0.5 },
+      { x: 748, y: 468, pressure: 0.5 },
+    ],
+    color: "#facc15",
+    size: 25,
+    opacity: 0.34,
+    semanticColor: { template: "Product Feedback", label: "Highlight", intent: "highlight" },
+    feedback: {
+      action: "highlight",
+      selector: "[data-action='add-source']",
+      note: "Make this primary",
+      severity: "medium",
+    },
+  },
+];

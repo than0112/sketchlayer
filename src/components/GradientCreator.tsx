@@ -1,7 +1,7 @@
 import { gradientCss, gradientPresets } from "../lib/templates";
 import type { GradientPreset } from "../lib/types";
 
-type GradientCreatorProps = {
+export type GradientCreatorProps = {
   selectedId?: string;
   onSelect: (preset: GradientPreset) => void;
   onCopy: (preset: GradientPreset) => void;

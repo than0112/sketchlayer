@@ -8,6 +8,7 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.ts",
     css: true,
+    exclude: ["e2e/**", "node_modules/**", "dist/**", "dist-lib/**"],
   },
   build: {
     // OneDrive can hold generated files briefly and make directory cleanup fail.
