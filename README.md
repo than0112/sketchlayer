@@ -1,6 +1,14 @@
 # SketchLayer
 
-An embeddable React layer for turning visual annotations into AI-readable data. SketchLayer provides a high-DPI Canvas 2D renderer, pointer input, semantic colors, immutable undo/redo history, and versioned JSON export without becoming a general-purpose whiteboard.
+An embeddable React layer for turning visual annotations into AI-readable data. SketchLayer provides a high-DPI Canvas 2D renderer, pointer input, semantic colors, immutable undo/redo history, and versioned JSON export—without becoming a general-purpose whiteboard.
+
+![SketchLayer dashboard feedback demo](https://raw.githubusercontent.com/than0112/sketchlayer/main/design-qa/implementation-desktop.png)
+
+## Use when / Not for
+
+Use SketchLayer when a React product needs people to mark up an AI-generated interface, then send an agent structured visual feedback such as “move this higher” or “preserve this”. It is designed to sit over an existing UI or image, not replace it.
+
+It is not a collaborative whiteboard, Figma-style editor, document editor, or social-graphic creator. Text tools, object transforms, collaboration, and a full layer tree are intentionally out of scope.
 
 ## Install
 
@@ -16,12 +24,15 @@ import "sketchlayer/styles.css";
 
 ## Minimal integration
 
-The smallest uncontrolled canvas is three lines:
+An uncontrolled canvas needs only the component, its styles, and a sized parent:
 
 ```tsx
-<div style={{ width: 960, height: 540 }}>
-  <SketchCanvas tool="pen" brush={{ color: "#111827", size: 4, opacity: 1 }} />
-</div>
+import { SketchCanvas } from "sketchlayer";
+import "sketchlayer/styles.css";
+
+export function FeedbackLayer() {
+  return <div style={{ width: 960, height: 540 }}><SketchCanvas tool="pen" brush={{ color: "#111827", size: 4, opacity: 1 }} /></div>;
+}
 ```
 
 For a complete controlled experience:
@@ -60,68 +71,117 @@ export function FeedbackLayer() {
 }
 ```
 
+## AI-readable output
+
+Pro annotations keep their visual shape separate from their agent instruction. The agent-ready `InstructionMeta` payload is small and explicit:
+
+```json
+{
+  "operation": "move",
+  "target": { "kind": "selector", "value": "[data-testid=\"date-range\"]" },
+  "note": "Move date range higher",
+  "severity": "medium"
+}
+```
+
 ## Public API
 
-- `SketchCanvas` — controlled or uncontrolled annotation canvas.
-- `SketchToolbar` — accessible starter toolbar for pen, highlighter, eraser, history, color, and size.
-- `ColorTemplatePicker` — Product Feedback and Teaching semantic color templates.
-- `GradientCreator` — six canvas background presets.
-- `useSketchLayer` — immutable annotation history, active tool, and brush state.
-- Serialization helpers — versioned JSON creation, parsing, and serialization.
-- TypeScript types — annotation, brush, background, semantic color, and document contracts.
+The core package exports:
 
-See [API reference](./docs/api.md), [examples](./examples), [publishing guide](./docs/publishing.md), and the [validation protocol](./docs/gate-0-validation.md).
+```ts
+import {
+  SketchCanvas,
+  SketchToolbar,
+  useSketchLayer,
+  exportAnnotations,
+  exportCanvasPng,
+  serializeDocument,
+  deserializeDocument,
+} from "sketchlayer";
+```
+
+- `SketchCanvas` accepts either uncontrolled props or a controlled `CanvasValue` / `onChange` pair.
+- `useSketchLayer` owns immutable history, semantic brush state, tools, and JSON export helpers.
+- `SketchToolbar` is optional; its props are deliberately controlled so it can be replaced by a product-specific UI.
+- `exportAnnotations` produces the versioned JSON document; `exportCanvasPng` produces a transparent PNG data URL.
+
+See the [API reference](https://github.com/than0112/sketchlayer/blob/main/docs/api.md), [runnable examples](https://github.com/than0112/sketchlayer/tree/main/examples), [publishing guide](https://github.com/than0112/sketchlayer/blob/main/docs/publishing.md), and [validation protocol](https://github.com/than0112/sketchlayer/blob/main/docs/gate-0-validation.md).
 
 ## Pro 0.2 (optional)
 
-The Pro entry adds AI shapes, accessible color controls, natural freehand strokes, and structured instruction editing without increasing the core entry bundle.
+The Pro entry adds AI shapes, accessible color controls, natural freehand strokes, and structured instruction editing without increasing the core entry bundle. This complete composition is also available as [`examples/ProAnnotation.tsx`](https://github.com/than0112/sketchlayer/blob/main/examples/ProAnnotation.tsx).
 
 ```tsx
-import { SketchCanvas } from "sketchlayer";
-import { ProToolbar, useProSketchLayer } from "sketchlayer/pro";
+import { useState } from "react";
+import { colorTemplates, SketchCanvas, type ColorTemplate } from "sketchlayer";
+import {
+  AnnotationInspector,
+  BrushStudio,
+  ColorStudio,
+  ProToolbar,
+  ShapeStudio,
+  useProSketchLayer,
+} from "sketchlayer/pro";
 import "sketchlayer/styles.css";
 import "sketchlayer/pro.css";
 
-const pro = useProSketchLayer({
-  resolveTarget: ({ anchor }) => ({ kind: "region", id: `${anchor.x}:${anchor.y}` }),
-});
+export function ProAnnotation() {
+  const [templates, setTemplates] = useState<ColorTemplate[]>(colorTemplates);
+  const pro = useProSketchLayer({
+    resolveTarget: ({ anchor }) => ({ kind: "region", id: `canvas-${Math.round(anchor.x)}-${Math.round(anchor.y)}` }),
+  });
 
-<SketchCanvas
-  value={pro.value}
-  onChange={pro.onCanvasChange}
-  tool={pro.tool}
-  brush={pro.canvasBrush}
-  selectedAnnotationId={pro.selectedAnnotationId}
-  onAnnotationSelect={pro.selectAnnotation}
-/>;
-<ProToolbar
-  tool={pro.tool}
-  activePanel={pro.activePanel}
-  canSend={pro.canSend}
-  onToolChange={pro.setTool}
-  onPanelChange={pro.setActivePanel}
-/>;
+  return (
+    <div style={{ width: 960 }}>
+      <div style={{ height: 540 }}>
+        <SketchCanvas
+          value={pro.value}
+          onChange={pro.onCanvasChange}
+          tool={pro.tool}
+          brush={pro.canvasBrush}
+          selectedAnnotationId={pro.selectedAnnotationId}
+          onAnnotationSelect={pro.selectAnnotation}
+        />
+      </div>
+      <ProToolbar
+        tool={pro.tool}
+        activePanel={pro.activePanel}
+        canSend={pro.canSend}
+        onToolChange={pro.setTool}
+        onPanelChange={pro.setActivePanel}
+      />
+      {pro.activePanel === "draw" && <BrushStudio value={pro.brush} onChange={pro.setBrush} />}
+      {pro.activePanel === "shape" && <ShapeStudio value={pro.activeShapePresetId} onChange={pro.selectShapePreset} />}
+      {pro.activePanel === "color" && <ColorStudio value={pro.brush} templates={templates} onChange={pro.setBrush} onTemplatesChange={setTemplates} />}
+      {pro.inspectorDraft && <AnnotationInspector value={pro.inspectorDraft} resolverStatus={pro.resolverStatus} isNew={pro.isInspectorNew} onChange={pro.setInspectorDraft} onSave={pro.saveInspector} onCancel={pro.cancelInspector} />}
+    </div>
+  );
+}
 ```
 
-Open the local demo at `/#pro`. `templates`, `brandPalette`, and `onTemplatesChange` are controlled by the host; SketchLayer never writes them to local storage.
+`templates`, `brandPalette`, and `onTemplatesChange` are controlled by the host; SketchLayer never writes them to local storage. There is no public hosted demo yet, so the repository example is the canonical source instead of a browser-local route.
+
+## Compatibility and footprint
+
+- Peer dependencies: React and React DOM `^18.3.0 || ^19.0.0`; TypeScript declarations are bundled.
+- For SSR frameworks, render `SketchCanvas` from a client component. Canvas 2D and Pointer Events become interactive after client hydration.
+- Core is **6.47 KB gzip**; the optional Pro consumer bundle is **43.21 KB gzip** (minified ESM gzip, excluding React and React DOM peers).
+- SketchLayer targets modern browsers with Canvas 2D, Pointer Events, ResizeObserver, and ES2022 support. For older browsers, load polyfills in the host application.
 
 ## Development
 
 ```bash
 npm install
 npm run dev
-npm test
-npm run test:e2e
 npm run typecheck
+npm test
 npm run build
 npm run package:check
 ```
 
-`npm run build` produces the demo application in `dist/` and the ESM package with declarations in `dist-lib/`.
+`npm run package:check` builds the library and validates the package contents with `npm pack --dry-run`. Run `npm run test:e2e` separately when Playwright browsers are installed.
 
-## Browser support
-
-SketchLayer targets modern browsers with Canvas 2D, Pointer Events, ResizeObserver, and ES2022 support. Mouse, touch, and pressure data are normalized through Pointer Events.
+Before publishing a new package version, run the commands above, then follow the [publishing guide](https://github.com/than0112/sketchlayer/blob/main/docs/publishing.md).
 
 ## License
 
