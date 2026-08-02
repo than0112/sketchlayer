@@ -9,15 +9,23 @@ Run these commands yourself in a trusted terminal; do not paste passwords, one-t
 1. Sign in through the browser flow: `npm login --auth-type=web`.
 2. Confirm the authenticated owner: `npm whoami`.
 3. Enable npm 2FA for authorization and writes. Use a security key or authenticator and store recovery codes offline.
-4. In npmjs.com, configure **Trusted Publisher** for:
+4. **Bootstrap exception for a brand-new package:** npm only permits Trusted Publisher configuration after a package exists on the registry. If `sketchlayer` does not exist yet, perform the first publish interactively from this clean checkout after every check passes:
+
+   ```powershell
+   npm publish --access public --provenance=false
+   ```
+
+   Complete the 2FA prompt. This one bootstrap release cannot have OIDC provenance. If provenance is required for the first stable release, publish a clearly labelled prerelease first, then configure Trusted Publishing before publishing the stable version.
+
+5. Once the package exists, in npmjs.com configure **Trusted Publisher** for:
    - GitHub user or organization: `than0112`
    - Repository: `sketchlayer`
    - Workflow filename: `publish.yml`
    - Environment: `npm`
    - Allowed action: `npm publish`
-5. In GitHub, protect the `npm` environment with the release approvers you want. Never add an npm write token as a repository secret for this workflow; it uses GitHub Actions OIDC.
+6. In GitHub, protect the `npm` environment with the release approvers you want. Never add an npm write token as a repository secret for this workflow; it uses GitHub Actions OIDC.
 
-For a new package, the first successful publish establishes the npm owner. If the name is already owned by another account, stop and either choose a scoped name (for example `@than0112/sketchlayer`) or request an owner transfer. Do not publish from a developer machine to bypass this workflow.
+The first successful publish establishes the npm owner. If the name is already owned by another account, stop and either choose a scoped name (for example `@than0112/sketchlayer`) or request an owner transfer. After the bootstrap release, do not publish from a developer machine; use the protected OIDC workflow only.
 
 ## Release procedure
 
