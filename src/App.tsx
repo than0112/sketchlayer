@@ -1,15 +1,13 @@
-import {
-  CaretDown,
-  Check,
-  CloudCheck,
-  Export,
-  PencilSimple,
-  Plus,
-  ShareNetwork,
-  ScribbleLoop,
-  Trash,
-  X,
-} from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { Check } from "@phosphor-icons/react/dist/csr/Check";
+import { CloudCheck } from "@phosphor-icons/react/dist/csr/CloudCheck";
+import { Export } from "@phosphor-icons/react/dist/csr/Export";
+import { PencilSimple } from "@phosphor-icons/react/dist/csr/PencilSimple";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { ShareNetwork } from "@phosphor-icons/react/dist/csr/ShareNetwork";
+import { ScribbleLoop } from "@phosphor-icons/react/dist/csr/ScribbleLoop";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { FloatingToolbar, type ToolbarPopover } from "./components/FloatingToolbar";
 import { JsonPreviewPanel } from "./components/JsonPreviewPanel";

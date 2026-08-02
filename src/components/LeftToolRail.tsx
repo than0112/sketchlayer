@@ -1,4 +1,7 @@
-import { CursorClick, Hand, MagnifyingGlassPlus, Stack } from "@phosphor-icons/react";
+import { CursorClick } from "@phosphor-icons/react/dist/csr/CursorClick";
+import { Hand } from "@phosphor-icons/react/dist/csr/Hand";
+import { MagnifyingGlassPlus } from "@phosphor-icons/react/dist/csr/MagnifyingGlassPlus";
+import { Stack } from "@phosphor-icons/react/dist/csr/Stack";
 import { useState } from "react";
 
 const tools = [

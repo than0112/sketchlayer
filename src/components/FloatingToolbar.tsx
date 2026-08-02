@@ -1,20 +1,18 @@
-import {
-  ArrowBendUpLeft,
-  ArrowBendUpRight,
-  ArrowUpRight,
-  Circle,
-  DotsThree,
-  Eraser,
-  FilePng,
-  Gradient,
-  Highlighter,
-  Image,
-  ImageBroken,
-  Palette,
-  PenNib,
-  Rectangle,
-  SlidersHorizontal,
-} from "@phosphor-icons/react";
+import { ArrowBendUpLeft } from "@phosphor-icons/react/dist/csr/ArrowBendUpLeft";
+import { ArrowBendUpRight } from "@phosphor-icons/react/dist/csr/ArrowBendUpRight";
+import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
+import { Circle } from "@phosphor-icons/react/dist/csr/Circle";
+import { DotsThree } from "@phosphor-icons/react/dist/csr/DotsThree";
+import { Eraser } from "@phosphor-icons/react/dist/csr/Eraser";
+import { FilePng } from "@phosphor-icons/react/dist/csr/FilePng";
+import { Gradient } from "@phosphor-icons/react/dist/csr/Gradient";
+import { Highlighter } from "@phosphor-icons/react/dist/csr/Highlighter";
+import { Image } from "@phosphor-icons/react/dist/csr/Image";
+import { ImageBroken } from "@phosphor-icons/react/dist/csr/ImageBroken";
+import { Palette } from "@phosphor-icons/react/dist/csr/Palette";
+import { PenNib } from "@phosphor-icons/react/dist/csr/PenNib";
+import { Rectangle } from "@phosphor-icons/react/dist/csr/Rectangle";
+import { SlidersHorizontal } from "@phosphor-icons/react/dist/csr/SlidersHorizontal";
 import { BrushSettings } from "./BrushSettings";
 import { ColorTemplatePicker } from "./ColorTemplatePicker";
 import { GradientCreator } from "./GradientCreator";

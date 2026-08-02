@@ -1,4 +1,6 @@
-import { Check, Copy, PaperPlaneTilt } from "@phosphor-icons/react";
+import { Check } from "@phosphor-icons/react/dist/csr/Check";
+import { Copy } from "@phosphor-icons/react/dist/csr/Copy";
+import { PaperPlaneTilt } from "@phosphor-icons/react/dist/csr/PaperPlaneTilt";
 import { useState } from "react";
 import type { Annotation, FeedbackMeta } from "../lib/types";
 
